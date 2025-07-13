@@ -31,7 +31,10 @@ class FourInARowGUI:
 
         player = self.players[self.turn % 2]
         self.board[row][col] = player
-        self.buttons[row][col]['text'] = player
+
+        btn = self.buttons[row][col]
+        btn['text'] = player
+        btn['fg'] = 'red' if player == 'X' else 'blue'
 
         result = self.check_board(player)
         if result == "win":
@@ -44,14 +47,17 @@ class FourInARowGUI:
         elif self.turn == BOARD_SIZE * BOARD_SIZE - 1:
             messagebox.showinfo("Draw", "It's a draw!")
             self.disable_board()
+
         self.turn += 1
 
     def reset_board(self):
         self.board = [[None for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
         for i in range(BOARD_SIZE):
             for j in range(BOARD_SIZE):
-                self.buttons[i][j]['text'] = ""
-                self.buttons[i][j]['state'] = tk.NORMAL
+                btn = self.buttons[i][j]
+                btn['text'] = ""
+                btn['fg'] = 'black'
+                btn['state'] = tk.NORMAL
         self.turn = 0
 
     def disable_board(self):
@@ -86,8 +92,7 @@ class FourInARowGUI:
                 if result:
                     return result
 
-        # Diagonals
-        # Top-left to bottom-right
+        # Diagonals — top-left to bottom-right
         for r in range(BOARD_SIZE - 3):
             for c in range(BOARD_SIZE - 3):
                 diag = [self.board[r + i][c + i] for i in range(min(5, BOARD_SIZE - max(r, c)))]
@@ -95,7 +100,7 @@ class FourInARowGUI:
                 if result:
                     return result
 
-        # Top-right to bottom-left
+        # Diagonals — top-right to bottom-left
         for r in range(BOARD_SIZE - 3):
             for c in range(3, BOARD_SIZE):
                 diag = [self.board[r + i][c - i] for i in range(min(5, min(BOARD_SIZE - r, c + 1)))]
